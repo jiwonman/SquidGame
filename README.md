@@ -17,4 +17,7 @@ StartScene과 MainScene으로 나눈다.
 - StartScene : 스토리 형식의 이미지 파일(4개)을 보여준 후 MainScene으로 이동 (SceneManager 활용)
 - MainScene : 시작 카드를 인식하면 게임이 시작, 홀/짝 카드 중 1개를 입력하면 해당 결과 값을 출력해주고 점수를 나타내 줌.
 
+### Test Commit
+Test
+
 개발 일정 : 2022.05.26 ~
