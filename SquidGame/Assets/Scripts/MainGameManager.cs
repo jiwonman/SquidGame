@@ -13,7 +13,7 @@ public class MainGameManager : MonoBehaviour
         PlayerTurn,
         Result
     }
-    private NowState nowState = 0;
+    private NowState nowState = NowState.Select01Turn;
 
     // 카드 인식 일시 정지
     private bool isGameOn = true;
@@ -40,10 +40,12 @@ public class MainGameManager : MonoBehaviour
 
     // 최종 결과 창
     public GameObject Canvas_Result;
+    public GameObject Canvas;
 
     void Start()
     {
-        nowStateText.text = "캐릭터 카드를 인식해주세요.";
+        Canvas.SetActive(true);
+        nowStateText.text = "사용자의 캐릭터 카드를 인식해주세요.";
         Canvas_Result.SetActive(false);
     }
 
@@ -80,21 +82,21 @@ public class MainGameManager : MonoBehaviour
     // 해당 턴인 플레이어의 카드를 설정
     private void SetPlayersCard(int _pCard)
     {
-        if ((int)nowState == 0)
+        if (nowState == NowState.Select01Turn)
         {
             playerCharacterCard = _pCard;
-            nowState++;
+            nowState = NowState.Select02Turn;
         }
-        else if ((int)nowState == 1)
+        else if (nowState == NowState.Select02Turn)
         {
             AICharacterCard = _pCard;
-            nowState++;
+            nowState = NowState.PlayerTurn;
         }
-        else if ((int)nowState == 2)
+        else if (nowState == NowState.PlayerTurn)
         {
             playerCard = _pCard;
             AICard = Random.Range(0, 2);
-            nowState++;
+            nowState = NowState.Result;
         }
     }
 
@@ -102,20 +104,20 @@ public class MainGameManager : MonoBehaviour
     private void SetMessage()
     {
         Debug.Log("SetMesageCalled");
-        if ((int)nowState == 0)
+        if (nowState == NowState.Select01Turn)
         {
             nowStateText.text = "사용자의 캐릭터 카드를 선택해주세요";
         }
-        else if ((int)nowState == 1)
+        else if (nowState == NowState.Select02Turn)
         {
             nowStateText.text = "AI의 캐릭터 카드를 선택해주세요";
         }
-        else if ((int)nowState == 2)
+        else if (nowState == NowState.PlayerTurn)
         {
             nowStateText.text = "홀/짝 카드를 선택해주세요";
         }
 
-        else if ((int)nowState == 3)
+        else if (nowState == NowState.Result)
         {
             // 누가 승리했는지 계산하는 메소드
             CalcRoundWinner();
@@ -168,13 +170,13 @@ public class MainGameManager : MonoBehaviour
         bool isGameOver = false;
 
         // AI 승리
-        if (playerHP == 0)
+        if (playerHP < 1 && AIHP > 0)
         {
             nowStateText.text = "최종 결과: AI 승리";
             isGameOver = true;
         }
         // 플레이어 최종 승리
-        else if (AIHP == 0)
+        else if (AIHP < 1 && playerHP > 0)
         {
             nowStateText.text = "최종 결과: 플레이어 승리";
             isGameOver = true;
@@ -184,11 +186,16 @@ public class MainGameManager : MonoBehaviour
             isGameOn = false;
             isCharacterOn = false;
             // 최종게임 결과 화면
+            Canvas.SetActive(false);
             Canvas_Result.SetActive(true);
         }
         else
         {
-            nowState--;
+            if (nowState == NowState.Result)
+            {
+                isCharacterOn = false;
+                nowState = NowState.PlayerTurn;
+            }
         }
     }
 
@@ -196,9 +203,10 @@ public class MainGameManager : MonoBehaviour
     {
         isGameOn = true;
         isCharacterOn = true;
-        nowState = 0;
+        nowState = NowState.Select01Turn;
         playerHP = 5;
         AIHP = 5;
         SetMessage();
+        Canvas.SetActive(true);
     }
 }
