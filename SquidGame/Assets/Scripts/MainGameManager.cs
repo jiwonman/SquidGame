@@ -25,7 +25,7 @@ public class MainGameManager : MonoBehaviour
     public Text AIHP_Text;
 
     //플레이어들이 선택한 캐릭터 카드 저장할 변수
-    // 0 = 오일남, 1 = 성기훈
+    // 4 = 오일남, 3 = 성기훈
     private int playerCharacterCard;
     private int AICharacterCard;
 
