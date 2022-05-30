@@ -3,7 +3,13 @@ guid: bd8225dd174c8774f99a1eaa9bb9b604
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - nowStateText: {instanceID: 0}
+  - playerHP_Text: {instanceID: 0}
+  - AIHP_Text: {instanceID: 0}
+  - audioGame: {fileID: 8300000, guid: 4b9b5a684360b0b4f844fd9d67fd62f4, type: 3}
+  - audioResult: {fileID: 8300000, guid: 1b15d79815d22254b98e98592751723d, type: 3}
+  - Canvas_Result: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
