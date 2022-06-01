@@ -6,12 +6,13 @@ using UnityEngine.UI;
 public class MainGameManager : MonoBehaviour
 {
     // 현재 게임 진행 상태를 저장할 열거형
+    // 열거형은 변수처럼 사용하지 못한다.
     enum NowState
     {
-        PlayerCardTurn,
-        PlayerTurn,
-        AITurn,
-        Result
+        PlayerCardTurn, // 0
+        PlayerTurn,     // 1
+        AITurn,         // 2
+        Result          // 3
     }
     private NowState nowState = 0;
 
@@ -31,7 +32,7 @@ public class MainGameManager : MonoBehaviour
     private string AICharacterCard;
 
     // 플레이어들이 낸 카드를 저장할 변수
-    // 0 = 짝, 1 = 홀, 2 = AI
+    // 0 = 짝, 1 = 홀, 2 = AI 인식
     private int playerCard;
     private int AICard;
     private int testCard;
@@ -61,17 +62,19 @@ public class MainGameManager : MonoBehaviour
     // 캐릭터 카드가 인식 되면 값을 전달받는 메소드
     public void SelectCard(string _inputPlayerCard)
     {
-        Debug.Log("not in if");
+        // Character Card를 받으면 False, 받지 못하면 True
         if (isCharacterOn)
         {
-            Debug.Log("in if");
+            Debug.Log("in");
             SetPlayersCard(_inputPlayerCard);
             SetMessage();
         }
+        Debug.Log("Loop Out");
     }
 
     private void SetPlayersCard(string _p1Card)
     {
+        // 캐릭터 카드 선택 상태
         if ((int)nowState == 0)
         {
             if (_p1Card == "성기훈")
@@ -92,13 +95,14 @@ public class MainGameManager : MonoBehaviour
     // 카드가 인식 되면 값을 전달받는 메소드
     public void FilpCard(int _inputCard)
     {
-        Debug.Log("not in if");
+        // Game이 끝나지 않으면 지속적으로 홀, 짝, 인식카드를 받는다.
         if (isGameOn)
         {
             Debug.Log("in if");
             SetEvenCard(_inputCard);
             SetMessage();
         }
+        Debug.Log("Loop Out");
     }
 
     // 해당 턴인 플레이어의 카드를 설정
@@ -106,132 +110,138 @@ public class MainGameManager : MonoBehaviour
     {
         if ((int)nowState == 1)
         {
-            playerCard = _pCard;
-            AICard = Random.Range(0, 2);
-            if (AICard == 0)
+            // nowState ==1 에 AI 인식 카드가 들어왔을 때
+            if (_pCard == 2)
             {
-                Current_Text.text = "AI의 카드 짝";
-                nowState++;
+                Debug.Log("Loop Out");
+                // 빠져나와서 다음 인식을 기다림
             }
-            else if (AICard == 1)
+            else
             {
-                Current_Text.text = "AI의 카드 홀";
-                nowState++;
+                // 아닐 경우 인식된 카드를 playerCard로 저장하고 AICard에 0,1 중 랜덤 값을 넣어줌
+                playerCard = _pCard;
+                AICard = Random.Range(0, 2);
+                if (AICard == 0)
+                {
+                    Current_Text.text = "AI의 카드 짝";
+                    nowState++;
+                }
+                else if (AICard == 1)
+                {
+                    Current_Text.text = "AI의 카드 홀";
+                    nowState++;
+                }
             }
+
 
         }
         else if ((int)nowState == 2)
         {
-            // 인식용 AI Card
+            // 인식용 AI Card : AI Turn만 인식해주고 다음 상태로 넘어감.
             testCard = _pCard;
             nowState++;
-            Current_Text.text = "AI와 사용자 카드 비교";
         }
         else
         {
+            // nowState 상태 표시 하고 Loop Out, log 확인을 위함
             Current_Text.text = _pCard.ToString();
+            Debug.Log("Loop Out");
         }
     }
 
     // 메시지 변경
     private void SetMessage()
     {
-        Debug.Log("SetMesageCalled");
+        Debug.Log("Message");
         if ((int)nowState == 0)
         {
             nowStateText.text = "사용자 캐릭터 카드 선택";
-            // Current_Text.text = nowState.ToString();
         }
         else if ((int)nowState == 1)
         {
             nowStateText.text = "홀/짝 카드 선택";
-            // Current_Text.text = nowState.ToString();
         }
         else if ((int)nowState == 2)
         {
             nowStateText.text = "AI Turn";
-            // Current_Text.text = nowState.ToString();
-            if (AICard == 1)
+            if (AICard == 0)
             {
                 Current_Text.text = "AI의 카드 짝";
-                // Current_Text.text = nowState.ToString();
             }
-            else if (AICard == 2)
+            else if (AICard == 1)
             {
                 Current_Text.text = "AI의 카드 홀";
-                // Current_Text.text = nowState.ToString();
             }
         }
         else if ((int)nowState == 3)
         {
-            // Current_Text.text = nowState.ToString();
-            CalcRoundWinner();
+            WhoIsWinner();
         }
     }
 
     // 승자 계산 메소드
-    // 플레이어 승리 -> 1,
-    // AI 승리 -> 0
+    // 플레이어 승리 : 1,
+    // AI 승리 : 0
 
-    private void CalcRoundWinner()
+    private void WhoIsWinner()
     {
         int winner = 0;
 
         // 플레이어와 AI의 카드가 같은 경우
-        if (playerCard == 1 && AICard == 1)
+        if (playerCard == 0 && AICard == 0)
         {
             winner = 1;
         }
 
         // 플레이어와 AI의 카드가 다른 경우
-        else if (playerCard == 1 && AICard == 2)
+        else if (playerCard == 0 && AICard == 1)
         {
             winner = 0;
         }
-        else if (playerCard == 2 && AICard == 1)
+        else if (playerCard == 1 && AICard == 0)
         {
             winner = 0;
         }
-        else if (playerCard == 2 && AICard == 2)
+        else if (playerCard == 1 && AICard == 1)
         {
             winner = 1;
         }
-        ApplyRoundWinner(winner);
+
+        //승리 메시지 보내기
+        HpAttack(winner);
     }
 
-    // 이긴 플레이어의 메시지를 출력하고
-    // 라운드 승리 횟수를 더함
-    private void ApplyRoundWinner(int _winner)
+    // 이긴 플레이어의 메시지를 출력하고 진 사람의 HP 깎기
+    private void HpAttack(int _winner)
     {
         if (_winner == 0)
         {
             nowStateText.text = "AI의 승리";
             playerHP--;
-            // Current_Text.text = nowState.ToString();
         }
 
         if (_winner == 1)
         {
             nowStateText.text = "플레이어 승리";
             AIHP--;
-            // Current_Text.text = nowState.ToString();
         }
 
-        FindFinalWinner();
+        // 라운드마다 Result 확인 메서드
+        ResultTo();
     }
 
-    private void FindFinalWinner()
+    private void ResultTo()
     {
         bool isGameOver = false;
 
-        // AI 승리
-        if (playerHP == 0)
+        // AI 최종 승리 GameOver
+        if ((playerHP == 0) && (AIHP > 1))
         {
             nowStateText.text = "최종 결과: AI 승리";
             isGameOver = true;
         }
-        // 플레이어 최종 승리
-        else if (AIHP == 0)
+        // 플레이어 최종 승리 GameOver
+        else if ((AIHP == 0) && (playerHP > 1))
         {
             nowStateText.text = "최종 결과: 플레이어 승리";
             isGameOver = true;
@@ -246,12 +256,13 @@ public class MainGameManager : MonoBehaviour
         }
         else
         {
+            // 최종 승부가 나지않으면 상태값 변경
+
             Current_Text.text = "";
             isCharacterOn = false;
-            playerCard = 0;
+            testCard = 0;
             nowState = 0;
             nowState++;
-            // Current_Text.text = nowState.ToString();
         }
     }
 
