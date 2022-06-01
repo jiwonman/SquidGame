@@ -31,7 +31,7 @@ public class MainGameManager : MonoBehaviour
     private string AICharacterCard;
 
     // 플레이어들이 낸 카드를 저장할 변수
-    // 0 = 짝, 1 = 홀
+    // 0 = 짝, 1 = 홀, 2 = AI
     private int playerCard;
     private int AICard;
     private int testCard;
@@ -72,14 +72,14 @@ public class MainGameManager : MonoBehaviour
 
     private void SetPlayersCard(string _p1Card)
     {
-        if((int)nowState == 0)
+        if ((int)nowState == 0)
         {
-            if(_p1Card == "성기훈")
+            if (_p1Card == "성기훈")
             {
                 playerCharacterCard = _p1Card;
                 AICharacterCard = "오일남";
-            } 
-            else if(_p1Card == "오일남")
+            }
+            else if (_p1Card == "오일남")
             {
                 playerCharacterCard = _p1Card;
                 AICharacterCard = "성기훈";
@@ -123,7 +123,9 @@ public class MainGameManager : MonoBehaviour
         else if ((int)nowState == 2)
         {
             // 인식용 AI Card
+            testCard = _pCard;
             nowState++;
+            Current_Text.text = "AI와 사용자 카드 비교";
         }
         else
         {
@@ -149,12 +151,12 @@ public class MainGameManager : MonoBehaviour
         {
             nowStateText.text = "AI Turn";
             // Current_Text.text = nowState.ToString();
-            if (AICard == 0)
+            if (AICard == 1)
             {
                 Current_Text.text = "AI의 카드 짝";
                 // Current_Text.text = nowState.ToString();
             }
-            else if (AICard == 1)
+            else if (AICard == 2)
             {
                 Current_Text.text = "AI의 카드 홀";
                 // Current_Text.text = nowState.ToString();
@@ -176,21 +178,21 @@ public class MainGameManager : MonoBehaviour
         int winner = 0;
 
         // 플레이어와 AI의 카드가 같은 경우
-        if (playerCard == 0 && AICard == 0)
+        if (playerCard == 1 && AICard == 1)
         {
             winner = 1;
         }
 
         // 플레이어와 AI의 카드가 다른 경우
-        else if(playerCard == 0 && AICard == 1)
+        else if (playerCard == 1 && AICard == 2)
         {
             winner = 0;
         }
-        else if (playerCard == 1 && AICard == 0)
+        else if (playerCard == 2 && AICard == 1)
         {
             winner = 0;
         }
-        else if (playerCard == 1 && AICard == 1)
+        else if (playerCard == 2 && AICard == 2)
         {
             winner = 1;
         }
@@ -223,13 +225,13 @@ public class MainGameManager : MonoBehaviour
         bool isGameOver = false;
 
         // AI 승리
-        if ((playerHP == 0) && (AIHP > 1))
+        if (playerHP == 0)
         {
             nowStateText.text = "최종 결과: AI 승리";
             isGameOver = true;
         }
         // 플레이어 최종 승리
-        else if ((AIHP == 0) && (playerHP > 1))
+        else if (AIHP == 0)
         {
             nowStateText.text = "최종 결과: 플레이어 승리";
             isGameOver = true;
@@ -246,6 +248,7 @@ public class MainGameManager : MonoBehaviour
         {
             Current_Text.text = "";
             isCharacterOn = false;
+            playerCard = 0;
             nowState = 0;
             nowState++;
             // Current_Text.text = nowState.ToString();
